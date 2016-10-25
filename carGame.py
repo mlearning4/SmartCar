@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # @Author: Amar Prakash Pandey
-# @Date: 25-08-2016 
+# @Co-Author: Aman Garg
+# @Date: 25-10-2016 
 # @Email: amar.om1994@gmail.com  
 # @Github username: @amarlearning 
 # MIT License. You can find a copy of the License
