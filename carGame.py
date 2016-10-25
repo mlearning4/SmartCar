@@ -42,9 +42,12 @@ grassRoad = pygame.image.load(path.join(assets + '/grassslip.png'))
 stripOne = pygame.image.load(path.join(assets + '/stripone.png'))
 stripTwo = pygame.image.load(path.join(assets + '/striptwo.png'))
 coverImage = pygame.image.load(path.join(assets + '/cover.png'))
-SmartCarImage = [pygame.image.load(path.join(assets + '/newcar0_opt.png')),pygame.image.load(path.join(assets + '/newcar2_opt.png')),pygame.image.load(path.join(assets + '/newcar3_opt.png'))]
+SmartCarImage = [pygame.image.load(path.join(assets + '/newcar0_opt.png')),
+				pygame.image.load(path.join(assets + '/newcar2_opt.png')),
+				pygame.image.load(path.join(assets + '/newcar3_opt.png'))]
 RivalCarImage =pygame.image.load(path.join(assets + '/Black_viper_opt.png'))
 Boom =pygame.image.load(path.join(assets + '/exp.png'))
+GameOver =pygame.image.load(path.join(assets + '/gameover.png'))
 
 # Game windown, caption initialised
 gameDisplay = pygame.display.set_mode((display_width, display_height))
@@ -99,23 +102,26 @@ def carImage(x,y, which):
 def rivalcarImage(x,y):
  	gameDisplay.blit(RivalCarImage, (x,y))
 
-def Kaboom():
+def Kaboom(score):
 	init()
-	pygame.draw.rect(gameDisplay, white, (200, 150, 550, 200))
+	gameDisplay.blit(GameOver,(382,175))
 	pygame.draw.rect(gameDisplay, white, (200, 400, 550, 50))
+	text = smallfont.render("Press P to continue and Q to quit", True, darkBlue)
+	gameDisplay.blit(text, [370,400])
+	text = smallfont.render("Score : " + str(score), True, red)
+	gameDisplay.blit(text, [450,420])
 	pygame.display.update()
 	gameExit = True
 	while gameExit:
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
-				gameExit = False
+				pygame.quit()
 			if event.type == pygame.KEYDOWN:
 				if event.key == pygame.K_p:
 					gameExit = False
 					gameloop()
 				if event.key == pygame.K_q:
-					gameExit = False
-
+					pygame.quit()
 
 def Score(score):
 	pygame.draw.rect(gameDisplay, green, (0,0, 170,45))
@@ -168,9 +174,11 @@ def gameloop():
 					change_x = 190
 				if event.key == pygame.K_LEFT:
 					change_x = -190	
+			
 			if event.type == pygame.KEYUP:
 				if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
 					change_x = 0
+				
 
 		init()
 		# changing position of SmartCar
@@ -200,13 +208,15 @@ def gameloop():
 
 		if (carX == rcarX[0] and 470 < a <700):
 			gameDisplay.blit(Boom, (carX,530))
+			pygame.time.wait(1000)
+			Kaboom(score)
 
 		elif (carX == rcarX[1] and 470 < b <700):
 			gameDisplay.blit(Boom, (carX,530))
-
+			Kaboom(score)
 		elif (carX == rcarX[2] and 470 < c <700):
 			gameDisplay.blit(Boom, (carX,530))
-
+			Kaboom(score)
 		# Updating Score
 		Score(score)
 	 	score = score + 1
@@ -233,4 +243,3 @@ def gameloop():
 	quit()
 	
 gameloop()
-# Kaboom()
