@@ -42,7 +42,9 @@ grassRoad = pygame.image.load(path.join(assets + '/grassslip.png'))
 stripOne = pygame.image.load(path.join(assets + '/stripone.png'))
 stripTwo = pygame.image.load(path.join(assets + '/striptwo.png'))
 coverImage = pygame.image.load(path.join(assets + '/cover.png'))
-SmartCarImage = [pygame.image.load(path.join(assets + '/newcar0_opt.png')),pygame.image.load(path.join(assets + '/newcar2_opt.png')),pygame.image.load(path.join(assets + '/newcar3_opt.png'))]
+SmartCarImage = [pygame.image.load(path.join(assets + '/newcar0_opt.png')),
+		 pygame.image.load(path.join(assets + '/newcar2_opt.png')),
+		 pygame.image.load(path.join(assets + '/newcar3_opt.png'))]
 RivalCarImage =pygame.image.load(path.join(assets + '/Black_viper_opt.png'))
 Boom =pygame.image.load(path.join(assets + '/exp.png'))
 
