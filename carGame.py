@@ -29,9 +29,6 @@ grey = (211,211,211)
 display_width = 950
 display_height = 700
 
-# Frames per second
-FPS = 5
-
 # Folder path init
 assets = path.join(path.dirname(__file__), 'assets/image')
 extras = path.join(path.dirname(__file__), 'extras')
@@ -130,12 +127,16 @@ def Score(score):
 
 def gameloop():
 
-	global FPS
+	# Frames per second
+	FPS = 5
+
 	# All necessary variable initalised
 	init()
+
 	# Kickstart variable
 	gameplay = True
 	score = 0
+
 	# Grass 2D image & Road Divider
 	Divider = True
 
@@ -149,6 +150,7 @@ def gameloop():
 	rcarX= [225,415,605]
 	rcarY= 0
 	a=b=c=rcarY
+
 	# car change variable
 	which_car = 0
 
@@ -179,7 +181,6 @@ def gameloop():
 				if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
 					change_x = 0
 				
-
 		init()
 		# changing position of SmartCar
 		carX += change_x
@@ -206,17 +207,10 @@ def gameloop():
 			if c>random.randint(1700, 2000):
 				c=0
 
-		if (carX == rcarX[0] and 470 < a <700):
+		if (carX == rcarX[0] and 470 < a <700) or (carX == rcarX[1] and 470 < b <700) or (carX == rcarX[2] and 470 < c <700):
 			gameDisplay.blit(Boom, (carX,530))
-			pygame.time.wait(1000)
 			Kaboom(score)
 
-		elif (carX == rcarX[1] and 470 < b <700):
-			gameDisplay.blit(Boom, (carX,530))
-			Kaboom(score)
-		elif (carX == rcarX[2] and 470 < c <700):
-			gameDisplay.blit(Boom, (carX,530))
-			Kaboom(score)
 		# Updating Score
 		Score(score)
 	 	score = score + 1
@@ -233,7 +227,7 @@ def gameloop():
 		pygame.display.update()
 
 		clock.tick(FPS)
-		if not score % 2000:
+		if not score % 100:
 			FPS += 1
 
 	# You will win, try one more time. Don't Quit.
