@@ -232,5 +232,5 @@ def gameloop():
 	# you can signoff now, everything looks good!
 	quit()
 	
-# gameloop()
-Kaboom()
+gameloop()
+# Kaboom()
