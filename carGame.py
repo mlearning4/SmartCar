@@ -44,6 +44,7 @@ coverImage = pygame.image.load(path.join(assets + '/cover.png'))
 SmartCarImage = [pygame.image.load(path.join(assets + '/newcar0_opt.png')),pygame.image.load(path.join(assets + '/newcar2_opt.png')),pygame.image.load(path.join(assets + '/newcar3_opt.png'))]
 RivalCarImage =pygame.image.load(path.join(assets + '/Black_viper_opt.png'))
 Boom =pygame.image.load(path.join(assets + '/exp.png'))
+
 # Game windown, caption initialised
 gameDisplay = pygame.display.set_mode((display_width, display_height))
 
@@ -62,14 +63,6 @@ largefont = pygame.font.SysFont("comicsansms", 60)
 # Engine sound added
 pygame.mixer.music.load(path.join(extras, "engine_sound.mp3"))
 pygame.mixer.music.play(-1)	
-
-# smart car image function
-def carImage(x,y, which):
-	gameDisplay.blit(SmartCarImage[which], (x,y))
-
-# rival car image function
-def rivalcarImage(x,y):
- 	gameDisplay.blit(RivalCarImage, (x,y))
 
 # function to init all game assets!
 def init():
@@ -96,6 +89,32 @@ def init():
 	gameDisplay.blit(stripOne, (380,0))
 	gameDisplay.blit(stripTwo, (560,0))
 	pygame.display.update()
+
+# smart car image function
+def carImage(x,y, which):
+	gameDisplay.blit(SmartCarImage[which], (x,y))
+
+# rival car image function
+def rivalcarImage(x,y):
+ 	gameDisplay.blit(RivalCarImage, (x,y))
+
+def Kaboom():
+	init()
+	pygame.draw.rect(gameDisplay, white, (200, 150, 550, 200))
+	pygame.draw.rect(gameDisplay, white, (200, 400, 550, 50))
+	pygame.display.update()
+	gameExit = True
+	while gameExit:
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				gameExit = False
+			if event.type == pygame.KEYDOWN:
+				if event.key == pygame.K_p:
+					gameExit = False
+					gameloop()
+				if event.key == pygame.K_q:
+					gameExit = False
+
 
 def Score(score):
 	pygame.draw.rect(gameDisplay, green, (0,0, 170,45))
@@ -212,4 +231,5 @@ def gameloop():
 	# you can signoff now, everything looks good!
 	quit()
 	
-gameloop()
+# gameloop()
+Kaboom()
