@@ -56,8 +56,6 @@ python carGame.py
 
 > All contributions accepted.
 
-#### To-do
-> Will be updated soon!
 ***
 
 ## Issues
