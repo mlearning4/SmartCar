@@ -25,6 +25,9 @@ white = (255,255,255)
 black = (0,0,0)
 grey = (211,211,211)
 
+# Frames per second
+FPS = 6
+
 # Display width and height are defined
 display_width = 950
 display_height = 700
@@ -127,9 +130,6 @@ def Score(score):
 
 def gameloop():
 
-	# Frames per second
-	FPS = 5
-
 	# All necessary variable initalised
 	init()
 
@@ -147,11 +147,16 @@ def gameloop():
 	# carImage Position
 	carX = 225
 	carY = 560
+
+	# Rival car coordinates 
 	rcarX= [225,415,605]
 	rcarY= 0
-	a=rcarY
-	b=-140
-	c=-280
+	Ya=rcarY
+	Yb=-140
+	Yc=-280
+
+	# speed Factor
+	factor = 20
 
 	# car change variable
 	which_car = 0
@@ -165,6 +170,7 @@ def gameloop():
 	# Heart starts beating, Don't stop it!
 	while gameplay:
 		
+		# Police siren activated :P
 		if which_car == 2:
 			which_car = 0
 		else:
@@ -193,31 +199,29 @@ def gameloop():
 			carImage(carX, carY, which_car)
 
 		# controlling movements of traffic
-		if score>10:
-			rivalcarImage(rcarX[0],a)
-			if(abs(a-b)<140):
-				a+=0
-				b-=300
-			else:
-				a+=20
-			if a>random.randint(1000, 2000):
-				a=0
-		if score>32:
-			rivalcarImage(rcarX[1],b)
-			if(abs(b-c)<140):
-				b+=0
-				c-=300
-			else:
-				b+=20
-			if b>random.randint(1000, 2000):
-				b=0
-		if score>75:
-			rivalcarImage(rcarX[2],c)
-			c+=20
-			if c>random.randint(1700, 2000):
-				c=0
+		if score > 10:
+			rivalcarImage(rcarX[0],Ya)
+			Ya += factor
+			if Ya > random.randint(1000, 2000):
+				Ya = 0
+		if score > 32:
+			rivalcarImage(rcarX[1],Yb)
+			Yb += factor
+			if Yb > random.randint(1000, 2000):
+				Yb=0
+		if score > 75:
+			rivalcarImage(rcarX[2],Yc)
+			Yc += factor
+			if Yc > random.randint(1700, 2000):
+				Yc=0
 
-		if (carX == rcarX[0] and 470 < a <700) or (carX == rcarX[1] and 470 < b <700) or (carX == rcarX[2] and 470 < c <700):
+		# car conflict avoiding condition
+		if (abs(Ya-Yb) < 280) or (abs(Yb-Yc) < 280):
+			Yb -= 350
+			print "current sistuation"
+
+		# car crash condiiton!
+		if (carX == rcarX[0] and 470 < Ya <700) or (carX == rcarX[1] and 470 < Yb <700) or (carX == rcarX[2] and 470 < Yc <700):
 			gameDisplay.blit(Boom, (carX,530))
 			Kaboom(score)
 
@@ -225,6 +229,7 @@ def gameloop():
 		Score(score)
 	 	score = score + 1
 
+	 	# Car moving visualization
 		if Divider == True:
 			gameDisplay.blit(stripTwo, (380, 0))
 			gameDisplay.blit(stripOne, (560, 0))
@@ -236,10 +241,14 @@ def gameloop():
 
 		pygame.display.update()
 
+		# speed of game.
 		clock.tick(FPS)
-		if not score %1000:
-			FPS += 1
-			print FPS
+
+		# Game speed increases with increase in time.
+		if not score %100:
+			factor += 10
+
+	print 
 	# You will win, try one more time. Don't Quit.
 	pygame.quit()
 
