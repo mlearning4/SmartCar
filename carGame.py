@@ -103,7 +103,7 @@ def Kaboom(score):
 	init()
 	gameDisplay.blit(GameOver,(382,175))
 	pygame.draw.rect(gameDisplay, white, (200, 400, 550, 50))
-	text = smallfont.render("Press P to continue and Q to quit", True, darkBlue)
+	text = smallfont.render("Press [RETURN] to continue and [Q] to quit", True, darkBlue)
 	gameDisplay.blit(text, [370,400])
 	text = smallfont.render("Score : " + str(score), True, red)
 	gameDisplay.blit(text, [450,420])
@@ -114,7 +114,7 @@ def Kaboom(score):
 			if event.type == pygame.QUIT:
 				pygame.quit()
 			if event.type == pygame.KEYDOWN:
-				if event.key == pygame.K_p:
+				if event.key == pygame.K_RETURN:
 					gameExit = False
 					gameloop()
 				if event.key == pygame.K_q:
@@ -149,7 +149,9 @@ def gameloop():
 	carY = 560
 	rcarX= [225,415,605]
 	rcarY= 0
-	a=b=c=rcarY
+	a=rcarY
+	b=-140
+	c=-280
 
 	# car change variable
 	which_car = 0
@@ -193,17 +195,25 @@ def gameloop():
 		# controlling movements of traffic
 		if score>10:
 			rivalcarImage(rcarX[0],a)
-			a +=20
+			if(abs(a-b)<140):
+				a+=0
+				b-=300
+			else:
+				a+=20
 			if a>random.randint(1000, 2000):
 				a=0
 		if score>32:
 			rivalcarImage(rcarX[1],b)
-			b +=20
+			if(abs(b-c)<140):
+				b+=0
+				c-=300
+			else:
+				b+=20
 			if b>random.randint(1000, 2000):
 				b=0
 		if score>75:
 			rivalcarImage(rcarX[2],c)
-			c +=20
+			c+=20
 			if c>random.randint(1700, 2000):
 				c=0
 
@@ -227,9 +237,9 @@ def gameloop():
 		pygame.display.update()
 
 		clock.tick(FPS)
-		if not score % 100:
+		if not score %1000:
 			FPS += 1
-
+			print FPS
 	# You will win, try one more time. Don't Quit.
 	pygame.quit()
 
