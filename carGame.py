@@ -218,7 +218,6 @@ def gameloop():
 		# car conflict avoiding condition
 		if (abs(Ya-Yb) < 280) or (abs(Yb-Yc) < 280):
 			Yb -= 350
-			print "current sistuation"
 
 		# car crash condiiton!
 		if (carX == rcarX[0] and 470 < Ya <700) or (carX == rcarX[1] and 470 < Yb <700) or (carX == rcarX[2] and 470 < Yc <700):
@@ -245,14 +244,14 @@ def gameloop():
 		clock.tick(FPS)
 
 		# Game speed increases with increase in time.
-		if not score %100:
+		if not score %1000:
 			factor += 10
 
-	print 
-	# You will win, try one more time. Don't Quit.
-	pygame.quit()
-
-	# you can signoff now, everything looks good!
-	quit()
-	
+# Kickstart the game! 
 gameloop()
+
+# You will win, try one more time. Don't Quit.
+pygame.quit()
+
+# you can signoff now, everything looks good!
+quit()
