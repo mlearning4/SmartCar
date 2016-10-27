@@ -222,6 +222,8 @@ def gameloop():
 		# car crash condiiton!
 		if (carX == rcarX[0] and 470 < Ya <700) or (carX == rcarX[1] and 470 < Yb <700) or (carX == rcarX[2] and 470 < Yc <700):
 			gameDisplay.blit(Boom, (carX,530))
+			pygame.display.flip()
+			time.sleep(1)
 			Kaboom(score)
 
 		# Updating Score
