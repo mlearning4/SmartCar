@@ -13,6 +13,13 @@ import time
 import random
 from os import path
 
+# Loading useful python modules
+from scipy.spatial import distance
+from sklearn import tree , neighbors
+from sklearn.datasets import load_iris
+from sklearn.metrics import accuracy_score
+from sklearn.model_selection import train_test_split
+
 # Pygame module initialised 
 pygame.init()
 
@@ -26,10 +33,10 @@ black = (0,0,0)
 grey = (211,211,211)
 
 # Frames per second
-FPS = 6
+FPS = 10
 
 # Display width and height are defined
-display_width = 950
+display_width = 1200
 display_height = 700
 
 # Folder path init
@@ -60,9 +67,9 @@ pygame.display.set_icon(gameIcon)
 clock = pygame.time.Clock()
 
 # Fonts Init
-smallfont = pygame.font.SysFont("comicsansms", 15)
-mediumfont = pygame.font.SysFont("comicsansms", 40)
-largefont = pygame.font.SysFont("comicsansms", 60)
+smallfont = pygame.font.SysFont("comicsansms", 24)
+mediumfont = pygame.font.SysFont("comicsansms", 50)
+largefont = pygame.font.SysFont("comicsansms", 70)
 
 # Engine sound added
 pygame.mixer.music.load(path.join(extras, "engine_sound.mp3"))
@@ -82,7 +89,7 @@ def init():
 	# Game basic design init [Left side] & [Right side]
 	gameDisplay.fill(black)
 	pygame.draw.rect(gameDisplay, grey, (grass_width, 0, border_width, border_height))
-	pygame.draw.rect(gameDisplay, grey, (display_width - grass_width - border_width, 0, border_width, border_height))
+	pygame.draw.rect(gameDisplay, grey, (display_width - grass_width - border_width - 250, 0, border_width, border_height))
 
 	for x in range(0,12):
 		gameDisplay.blit(grassRoad, (0, grassSlip))
@@ -102,36 +109,71 @@ def carImage(x,y, which):
 def rivalcarImage(x,y):
  	gameDisplay.blit(RivalCarImage, (x,y))
 
-def Kaboom(score):
+def Kaboom(score, gameGenerationX, maxScoreX):
 	init()
 	gameDisplay.blit(GameOver,(382,175))
 	pygame.draw.rect(gameDisplay, white, (200, 400, 550, 50))
-	text = smallfont.render("Press [RETURN] to continue and [Q] to quit", True, darkBlue)
-	gameDisplay.blit(text, [370,400])
-	text = smallfont.render("Score : " + str(score), True, red)
-	gameDisplay.blit(text, [450,420])
+	text = smallfont.render("Your Current Score is : " + str(score), True, red)
+	gameDisplay.blit(text, [400,410])
 	pygame.display.update()
-	gameExit = True
-	while gameExit:
-		for event in pygame.event.get():
-			if event.type == pygame.QUIT:
-				pygame.quit()
-			if event.type == pygame.KEYDOWN:
-				if event.key == pygame.K_RETURN:
-					gameExit = False
-					gameloop()
-				if event.key == pygame.K_q:
-					pygame.quit()
+	time.sleep(1)
+	gameloop(gameGenerationX, maxScoreX)
+
+def GameData(generation, maxScoreX):
+	text = smallfont.render("Agent Generation : " + str(generation), True, green)
+	gameDisplay.blit(text, [960,10])
+
+	text = smallfont.render("Max Score : " + str(maxScoreX), True, red)
+	gameDisplay.blit(text, [960,40])
+
+	epsilon = random.random()
+
+	text = smallfont.render("Epsilon : " + str(epsilon), True, red)
+	gameDisplay.blit(text, [960,110])
 
 def Score(score):
-	pygame.draw.rect(gameDisplay, green, (0,0, 170,45))
-	text = smallfont.render("Score : " + str(score), True, darkBlue)
-	gameDisplay.blit(text, [10,10])
+	text = smallfont.render("Current Score : " + str(score), True, darkBlue)
+	gameDisplay.blit(text, [960,70])
 
-def gameloop():
+def rewardFunction(a,b):
+	return distance.euclidean(a,b)
+
+# This classifier is defined to predict labels.
+class AgentTrainClassifier():
+	'''
+	This classifier with the help of provided feature 
+	tries to predict labels for the testing data.
+	'''
+	def fit(self, X_train, y_train):
+		self.X_train = X_train
+		self.y_train = y_train
+	
+	# method to predict values for the desired input.
+	def predict(self, X_test):
+		predictions = []
+		for row in X_test:
+			label = self.closest(row)
+			predictions.append(label)
+		return predictions
+
+	# Finds the correct label for the given feature.
+	def closest(self, row):
+		best_dist = euc(row, self.X_train[0])
+		best_index = 0
+		for i in range(1, len(self.X_train)):
+			dist = euc(row, self.X_train[i])
+			if dist < best_dist:
+				best_dist = dist
+				best_index = i
+		return self.y_train[best_index]
+
+def gameloop(gameGeneration, maxScore):
 
 	# All necessary variable initalised
 	init()
+
+	maxScoreX = maxScore
+	gameGenerationX = gameGeneration + 1
 
 	# Kickstart variable
 	gameplay = True
@@ -176,6 +218,14 @@ def gameloop():
 		else:
 			which_car += 1
 
+		items = [-1, 0, 1]
+
+
+		random.shuffle(items)
+
+		if items[0] == -1:
+			change_x = -190
+
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				gameplay = False
@@ -186,9 +236,15 @@ def gameloop():
 					change_x = -190	
 			
 			if event.type == pygame.KEYUP:
-				if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
+				if event.key == pygame.Kx_LEFT or event.key == pygame.K_RIGHT:
 					change_x = 0
 				
+		if items[0] == 1:
+			change_x = 190
+
+		if items[0] == 0:
+			change_x = 0
+
 		init()
 		# changing position of SmartCar
 		carX += change_x
@@ -224,11 +280,22 @@ def gameloop():
 			gameDisplay.blit(Boom, (carX,530))
 			pygame.display.flip()
 			time.sleep(1)
-			Kaboom(score)
+			Kaboom(score, gameGenerationX, maxScoreX)
 
 		# Updating Score
 		Score(score)
 	 	score = score + 1
+
+	 	if maxScoreX < score : 
+	 		maxScoreX = score
+
+	 	# GameData update
+	 	GameData(gameGenerationX, maxScoreX)
+
+		# Or we can define our own classifier! :D
+		classifier = AgentTrainClassifier()
+
+		# Giving Features as Input to train and test features to predict labels. 
 
 	 	# Car moving visualization
 		if Divider == True:
@@ -249,11 +316,17 @@ def gameloop():
 		if not score %1000:
 			factor += 10
 
-# Kickstart the game! 
-gameloop()
 
-# You will win, try one more time. Don't Quit.
-pygame.quit()
+if __name__ == '__main__':
 
-# you can signoff now, everything looks good!
-quit()
+	gameGeneration = 0
+	maxScore = 0
+
+	# Kickstart the game! 
+	gameloop(gameGeneration, maxScore)
+
+	# You will win, try one more time. Don't Quit.
+	pygame.quit()
+
+	# you can signoff now, everything looks good!
+	quit()
